@@ -1,0 +1,20 @@
+.bold {
+    font-weight: bold;  
+}
+
+.contact-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btns-container {
+    align-self: center;
+}
+
+.btns-container button {
+    margin: 5px;
+}
+
+.contact-img {
+    width: 70%;
+}
