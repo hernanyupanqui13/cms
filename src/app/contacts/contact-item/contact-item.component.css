@@ -1,0 +1,11 @@
+img {
+    width: 15%
+}
+
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: medium;
+}

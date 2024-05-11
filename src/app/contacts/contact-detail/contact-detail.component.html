@@ -1,10 +1,10 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="">{{contactDetail.name}}</h3>
+        <h3 class="">{{contactDetail?.name}}</h3>
         <div class="">
             <div class="contact-header">
                 <div class="">
-                    <img [src]="contactDetail.imageUrl" [alt]="contactDetail.name" class="contact-img">
+                    <img *ngIf="contactDetail" [src]="contactDetail.imageUrl" [alt]="contactDetail.name" class="contact-img">
                 </div>
                 <div class="btns-container">
                     <button type="button" class="btn btn-primary">Edit</button>
@@ -17,11 +17,11 @@
     <div class="panel-body">
         <div>
             <span class="bold">Email:&nbsp;</span>
-            <span>{{contactDetail.email}}</span>
+            <span>{{contactDetail?.email}}</span>
         </div>
         <div>
             <span class="bold">Phone:&nbsp;</span>
-            <span>{{contactDetail.phone}}</span>
+            <span>{{contactDetail?.phone}}</span>
         </div>
       
     </div>
