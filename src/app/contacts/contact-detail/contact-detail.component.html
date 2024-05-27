@@ -1,30 +1,35 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="">{{contactDetail?.name}}</h3>
+  <div class="panel-heading">
+    <h3 class="">{{ contactDetail?.name }}</h3>
+    <div class="">
+      <div class="contact-header">
         <div class="">
-            <div class="contact-header">
-                <div class="">
-                    <img *ngIf="contactDetail" [src]="contactDetail.imageUrl" [alt]="contactDetail.name" class="contact-img">
-                </div>
-                <div class="btns-container">
-                    <button type="button" class="btn btn-primary">Edit</button>
-                    <button type="button" class="btn btn-danger">Delete</button>
-                </div>
-            </div>
-
+          <img
+            *ngIf="contactDetail"
+            [src]="contactDetail.imageUrl"
+            [alt]="contactDetail.name"
+            class="contact-img"
+          />
         </div>
+        <div class="btns-container">
+          <a
+            [routerLink]="['../', contactDetail?.id, 'edit']"
+            class="btn btn-primary"
+            >Edit</a
+          >
+          <a class="btn btn-danger" (click)="onDelete()">Delete</a>
+        </div>
+      </div>
     </div>
-    <div class="panel-body">
-        <div>
-            <span class="bold">Email:&nbsp;</span>
-            <span>{{contactDetail?.email}}</span>
-        </div>
-        <div>
-            <span class="bold">Phone:&nbsp;</span>
-            <span>{{contactDetail?.phone}}</span>
-        </div>
-      
+  </div>
+  <div class="panel-body">
+    <div>
+      <span class="bold">Email:&nbsp;</span>
+      <span>{{ contactDetail?.email }}</span>
     </div>
+    <div>
+      <span class="bold">Phone:&nbsp;</span>
+      <span>{{ contactDetail?.phone }}</span>
+    </div>
+  </div>
 </div>
-
-

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DocumentModel } from '../document.model';
 import { DocumentService } from '../document.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { WinRefService } from '../../win-ref.service';
   styleUrl: './documents-detail.component.css',
 })
 export class DocumentsDetailComponent implements OnInit {
-  public document: DocumentModel;
+  document: DocumentModel;
   nativeWindow: any;
 
   constructor(

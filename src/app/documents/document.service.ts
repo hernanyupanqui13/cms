@@ -27,7 +27,7 @@ export class DocumentService {
     this.documentSelectedEvent.emit(document);
   }
 
-  deleteDocument(document: DocumentModel) {
+  deleteDocument(document: DocumentModel) : void {
     if (!document) {
        return;
     }

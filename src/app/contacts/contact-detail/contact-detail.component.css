@@ -11,7 +11,7 @@
     align-self: center;
 }
 
-.btns-container button {
+.btns-container .btn {
     margin: 5px;
 }
 

@@ -1,7 +1,9 @@
-<li class="list-group-item list-item">
-    <div>{{contact.name}}</div>
-    
-    <img [src]="contact.imageUrl" 
-        [alt]="contact.name"
-        class="">
-</li>
+<a
+  class="list-group-item list-item contact-item-container"
+  [routerLink]="[contact.id]"
+  routerLinkActive="active"
+>
+  <div>{{ contact.name }}</div>
+
+  <img [src]="contact.imageUrl" [alt]="contact.name" class="" />
+</a>
