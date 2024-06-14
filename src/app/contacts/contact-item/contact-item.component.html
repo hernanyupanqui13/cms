@@ -2,6 +2,9 @@
   class="list-group-item list-item contact-item-container"
   [routerLink]="[contact.id]"
   routerLinkActive="active"
+  draggable="true"
+  (dragstart)="onDragStart($event, contact)"
+
 >
   <div>{{ contact.name }}</div>
 

@@ -9,5 +9,7 @@ import { Contact } from '../contact.model';
 export class ContactItemComponent {
   @Input() contact: Contact;
   
-
+  onDragStart(event: any, contact: Contact) {
+    event?.dataTransfer?.setData('text', contact.id);
+  }
 }

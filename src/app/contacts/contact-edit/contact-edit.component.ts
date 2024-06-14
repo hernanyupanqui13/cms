@@ -3,6 +3,7 @@ import { Contact } from '../contact.model';
 import { ContactsService } from '../contacts.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-contact-edit',
@@ -64,5 +65,16 @@ export class ContactEditComponent implements OnInit {
     }
 
     this.router.navigate(['/contacts']);
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    console.log(event);
+    const contact = event.dataTransfer?.getData('text');
+    console.log(contact);
+  }
+
+  onDragOver(event: Event) {
+    event.preventDefault()
   }
 }
