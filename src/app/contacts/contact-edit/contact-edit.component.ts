@@ -16,6 +16,7 @@ export class ContactEditComponent implements OnInit {
   groupContacts: Contact[] = [];
   editMode: boolean = false;
   id: string;
+  addedContactIsValid: boolean = true;
 
   constructor(
     private contactService: ContactsService,
@@ -37,7 +38,7 @@ export class ContactEditComponent implements OnInit {
       this.editMode = true;
       this.contact = structuredClone(this.originalContact);
 
-      if(this.contact.group) {
+      if (this.contact.group) {
         this.groupContacts = this.contact.group.slice();
       }
     });
@@ -69,12 +70,46 @@ export class ContactEditComponent implements OnInit {
 
   onDrop(event: DragEvent) {
     event.preventDefault();
-    console.log(event);
-    const contact = event.dataTransfer?.getData('text');
-    console.log(contact);
+    const contactId = event.dataTransfer?.getData('text');
+    const contact = this.contactService.getContact(contactId);
+    this.addToGroup(contact);
   }
 
   onDragOver(event: Event) {
-    event.preventDefault()
+    event.preventDefault();
+  }
+
+  isInvalidContact(newContact: Contact) {
+    if (!newContact) {
+      // newContact has no value
+      return true;
+    }
+    if (this.contact && newContact.id === this.contact.id) {
+      this.addedContactIsValid = false;
+      return true;
+    }
+    for (let i = 0; i < this.groupContacts.length; i++) {
+      if (newContact.id === this.groupContacts[i].id) {
+        this.addedContactIsValid = false;
+        return true;
+      }
+    }
+    this.addedContactIsValid = true;
+    return false;
+  }
+
+  addToGroup(selectedContact: Contact) {
+    const invalidGroupContact = this.isInvalidContact(selectedContact);
+    if (invalidGroupContact) {
+      return;
+    }
+    this.groupContacts.push(selectedContact);
+  }
+
+  onRemoveItem(index: number) {
+    if (index < 0 || index >= this.groupContacts.length) {
+      return;
+    }
+    this.groupContacts.splice(index, 1);
   }
 }

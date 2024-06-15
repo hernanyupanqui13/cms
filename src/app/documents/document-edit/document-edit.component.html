@@ -49,7 +49,7 @@
           />
         </div>
       </div>
-      <div class="alert alert-danger" *ngIf="documentName.invalid || documentUrl.invalid">
+      <div class="alert alert-danger" *ngIf="(documentName.invalid &&documentName.touched) || (documentUrl.invalid && documentUrl.touched)">
         The Document Title and Document URL are required fields.
       </div>
 
