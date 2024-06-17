@@ -2,61 +2,82 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 import { DocumentModel } from './document.model';
 import { Subject } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DocumentService {
   documents: Array<DocumentModel> = [];
-  documentSelectedEvent : EventEmitter<DocumentModel> = new EventEmitter<DocumentModel>();
-  documentListChangedEvent : Subject<Array<DocumentModel>> = new Subject<Array<DocumentModel>>();
-  private maxDocumentId : number;
+  documentSelectedEvent: EventEmitter<DocumentModel> =
+    new EventEmitter<DocumentModel>();
+  documentListChangedEvent: Subject<Array<DocumentModel>> = new Subject<
+    Array<DocumentModel>
+  >();
+  private maxDocumentId: number;
+  private readonly BASE_URL =
+    'https://wdd430-cms-37ef7-default-rtdb.firebaseio.com/';
 
-  constructor() { 
-    this.documents = MOCKDOCUMENTS;
+  constructor(private readonly http: HttpClient) {
+    this.documents = [];
     this.maxDocumentId = this.getMaxId();
   }
 
-
   public getDocuments(): DocumentModel[] {
+    this.http.get<DocumentModel[]>(this.BASE_URL + 'documents.json').subscribe({
+      next: (documents: DocumentModel[]) => {
+        this.documents = documents;
+        this.maxDocumentId = this.getMaxId();
+        this.documents.sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
+        this.documentListChangedEvent.next(this.documents.slice());
+      },
+      error: (error: any) => {
+        console.error(error);
+      },
+    });
+
     return this.documents.slice();
   }
 
-  public getDocument(id: string) : DocumentModel {
-    return this.documents.find(document => document.id === id) || null;
+  public getDocument(id: string): DocumentModel {
+    return this.documents.find((document) => document.id === id) || null;
   }
 
-  public onSelectedDocument(document: DocumentModel) : void {
+  public onSelectedDocument(document: DocumentModel): void {
     this.documentSelectedEvent.emit(document);
   }
- 
+
   private getMaxId(): number {
-    let maxId = 0
-    
+    let maxId = 0;
+
     for (let document of this.documents) {
-      let currentId = parseInt(document.id)
+      let currentId = parseInt(document.id);
       if (currentId > maxId) {
-        maxId = currentId
+        maxId = currentId;
       }
     }
 
-    return maxId
+    return maxId;
   }
 
-  public addDocument(newDocument: DocumentModel) : void {
+  public addDocument(newDocument: DocumentModel): void {
     if (!newDocument) {
       return;
     }
 
     this.maxDocumentId++;
-    newDocument.id = this.maxDocumentId + "";
+    newDocument.id = this.maxDocumentId + '';
     this.documents.push(newDocument);
-    let documentsListClone = this.documents.slice();
-    this.documentListChangedEvent.next(documentsListClone);
+    this.storeDocuments();
   }
 
-  public updateDocument(originalDocument: DocumentModel, newDocument: DocumentModel) : void {
-    if (!originalDocument ||!newDocument) {
+  public updateDocument(
+    originalDocument: DocumentModel,
+    newDocument: DocumentModel
+  ): void {
+    if (!originalDocument || !newDocument) {
       return;
     }
 
@@ -67,23 +88,31 @@ export class DocumentService {
 
     newDocument.id = originalDocument.id;
     this.documents[pos] = newDocument;
-    let documentsListClone = this.documents.slice();
-    this.documentListChangedEvent.next(documentsListClone);
+    this.storeDocuments();
   }
 
-  
-  public deleteDocument(document: DocumentModel) : void {
+  public deleteDocument(document: DocumentModel): void {
     if (!document) {
-       return;
+      return;
     }
 
     const pos = this.documents.indexOf(document);
     if (pos < 0) {
-       return;
+      return;
     }
 
     this.documents.splice(pos, 1);
-    let documentsListClone = this.documents.slice();
-    this.documentListChangedEvent.next(documentsListClone);
+    this.storeDocuments();
+  }
+
+  storeDocuments(): void {
+    const documents = JSON.stringify(this.documents);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    this.http
+      .put(this.BASE_URL + 'documents.json', documents, { headers: headers })
+      .subscribe(() => {
+        this.documentListChangedEvent.next(this.documents.slice());
+      });
   }
 }

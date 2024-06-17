@@ -21,6 +21,7 @@ import { ContactEditComponent } from './contacts/contact-edit/contact-edit.compo
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ContactsFilterPipe } from './contacts-filter.pipe';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import { ContactsFilterPipe } from './contacts-filter.pipe';
     AppRoutingModule,
     FormsModule,
     DragDropModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
