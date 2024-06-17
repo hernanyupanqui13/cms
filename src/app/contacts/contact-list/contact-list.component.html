@@ -1,23 +1,40 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="row ">
-            <div class="col-xs-8">
-                <span class="h2">Contacts</span>
-            </div>
-            <div class="col-xs-4">
-                <button class="btn btn-success" [routerLink]="['new']" routerLinkActive="active" >New Contact</button>
-            </div>
-        </div>
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-xs-12">
+        <span class="h3 title pad-left-right">Contacts</span>
+      </div>
     </div>
-    <div class="panel-body">
-        <div class="row list-container">
-            <ul class="list-group">
-                <app-contact-item 
-                    *ngFor="let inputContact of contacts" 
-                    [contact]="inputContact"></app-contact-item>
-              </ul>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="input-group pull-left pad-left-right col-xs-7">
+          <input
+            type="text"
+            #searchBox
+            (keyup)="search(searchBox.value)"
+            class="form-control"
+            placeholder="Enter a search value"
+          />
+          <!-- Add the search box input field here -->
+          <div
+            class="glyphicon glyphicon-search input-group-addon"
+            (click)="search(searchBox.value)"
+          ></div>
         </div>
+        <div class="pull-right pad-left-right">
+          <a class="btn btn-success" [routerLink]="['new']">New Contact</a>
+        </div>
+      </div>
     </div>
   </div>
-
-
+  <div class="panel-body">
+    <div class="row list-container">
+      <ul class="list-group">
+        <app-contact-item
+          *ngFor="let inputContact of contacts | contactsFilter : term"
+          [contact]="inputContact"
+        ></app-contact-item>
+      </ul>
+    </div>
+  </div>
+</div>
