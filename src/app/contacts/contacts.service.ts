@@ -97,7 +97,7 @@ export class ContactsService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     this.http
-      .put(`${this.BASE_URL}contacts.json`, contacts, { headers: headers })
+      .put(`${this.BASE_URL}}contacts.json`, contacts, { headers: headers })
       .subscribe(() => {
         this.contactListChangedEvent.next(this.contacts.slice());
       });

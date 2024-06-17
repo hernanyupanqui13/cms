@@ -21,7 +21,7 @@ export class MessageEditComponent {
     this.subject = this.subjectElem.nativeElement.value;
     this.msgText = this.msgTextElem.nativeElement.value;
     
-    const msg = new Message("1", this.subject, this.msgText, this.currentSenderId);
+    const msg = new Message(this.subject, this.msgText, this.currentSenderId);
     this.messageService.addMessage(msg);
     
     // Cleaning the inputs 
