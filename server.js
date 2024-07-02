@@ -5,6 +5,18 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
+
+
+mongoose.connect('mongodb://localhost:27017/cms'/*, { useNewUrlParser: true }*/)
+  .catch(err => {
+    console.log('Connection failed: ' + err);
+  });
+;
+mongoose.connection.on('connected', () => {
+  console.log('Connected to database');
+});
+
 
 // import the routing file to handle the default (index) route
 var index = require('./server/routes/app');
@@ -63,6 +75,6 @@ app.set('port', port);
 const server = http.createServer(app);
 
 // Tell the server to start listening on the provided port
-server.listen(port, function() {
+server.listen(port, function () {
   console.log('API running on localhost: ' + port)
 });
