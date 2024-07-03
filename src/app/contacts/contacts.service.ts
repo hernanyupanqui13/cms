@@ -13,8 +13,7 @@ export class ContactsService {
     Array<Contact>
   >();
   private maxContactId: number;
-  private readonly BASE_URL =
-    'https://wdd430-cms-37ef7-default-rtdb.firebaseio.com/';
+  private readonly BASE_URL = 'http://localhost:3000/';
 
   constructor(private readonly http: HttpClient) {
     this.contacts = [];
@@ -23,9 +22,9 @@ export class ContactsService {
 
   public getContacts(): Contact[] {
     this.http
-      .get<Contact[]>(`${this.BASE_URL}contacts.json`)
-      .subscribe((contacts: Contact[]) => {
-        this.contacts = contacts;
+      .get<{ message: string; contacts: Contact[] }>(`${this.BASE_URL}contacts`)
+      .subscribe((res) => {
+        this.contacts = res.contacts;
         this.maxContactId = this.getMaxId();
         this.contacts.sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -57,13 +56,23 @@ export class ContactsService {
       return;
     }
 
-    this.maxContactId++;
-    newContact.id = this.maxContactId + '';
-    this.contacts.push(newContact);
-    this.storeContacts();
+    newContact.id = '';
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http
+      .post<{ message: string; createdContact: Contact }>(
+        `${this.BASE_URL}contacts`,
+        newContact,
+        { headers: headers }
+      )
+      .subscribe((responseData) => {
+        this.contacts.push(responseData.createdContact);
+        this.contactListChangedEvent.next(this.contacts.slice());
+      });
   }
 
   public updateContact(originalContact: Contact, newContact: Contact): void {
+    console.log('original', newContact);
     if (!originalContact || !newContact) {
       return;
     }
@@ -73,9 +82,21 @@ export class ContactsService {
       return;
     }
 
-    newContact.id = originalContact.id;
-    this.contacts[pos] = newContact;
-    this.storeContacts();
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    this.http
+      .put<{ message: string; updatedContact: Contact }>(
+        `${this.BASE_URL}contacts/${originalContact.id}`,
+        newContact,
+        {
+          headers: headers,
+        }
+      )
+      .subscribe(() => {
+        console.log('updated', newContact);
+        this.contacts[pos] = newContact;
+        this.contactListChangedEvent.next(this.contacts.slice());
+      });
   }
 
   public deleteContact(contact: Contact): void {
@@ -88,18 +109,11 @@ export class ContactsService {
       return;
     }
 
-    this.contacts.splice(pos, 1);
-    this.storeContacts();
+    this.http.delete(`${this.BASE_URL}contacts/${contact.id}`).subscribe(() => {
+      this.contacts.splice(pos, 1);
+      this.contactListChangedEvent.next(this.contacts.slice());
+    });
   }
 
-  storeContacts(): void {
-    const contacts = JSON.stringify(this.contacts);
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    this.http
-      .put(`${this.BASE_URL}contacts.json`, contacts, { headers: headers })
-      .subscribe(() => {
-        this.contactListChangedEvent.next(this.contacts.slice());
-      });
-  }
+  
 }

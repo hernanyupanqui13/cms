@@ -60,6 +60,7 @@ export class ContactEditComponent implements OnInit {
     );
 
     if (this.editMode) {
+      newContact.id = this.id;
       this.contactService.updateContact(this.originalContact, newContact);
     } else {
       this.contactService.addContact(newContact);

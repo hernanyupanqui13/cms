@@ -33,7 +33,8 @@ router.post("/", (req, res, next) => {
     id: maxMessageId,
     subject: req.body.subject,
     msgText: req.body.msgText,
-    sender: req.body.sender,
+    sender: "6684586e32367ef77a149f49", // temp solution until we have users id in the frontend side
+    // sender: req.body.sender,
   });
 
   message
@@ -45,6 +46,7 @@ router.post("/", (req, res, next) => {
       });
     })
     .catch((error) => {
+      console.error(error);
       res.status(500).json({
         message: "An error occurred",
         error: error.message,

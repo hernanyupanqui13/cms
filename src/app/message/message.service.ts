@@ -11,8 +11,7 @@ export class MessageService {
   private maxMessageId: number;
   private messages: Array<Message> = [];
   public messageChangedEvent: Subject<Message[]> = new Subject<Message[]>();
-  private readonly BASE_URL =
-    'https://wdd430-cms-37ef7-default-rtdb.firebaseio.com/';
+  private readonly BASE_URL = 'http://localhost:3000/';
 
   constructor(private readonly http: HttpClient) {
     this.messages = [];
@@ -20,9 +19,13 @@ export class MessageService {
   }
 
   public getMessages(): Message[] {
-    this.http.get<Message[]>(this.BASE_URL + 'messages.json').subscribe({
-      next: (messages: Message[]) => {
-        this.messages = messages;
+    type ServerResponse = {
+      message: string;
+      messages: Message[];
+    };
+    this.http.get<ServerResponse>(`${this.BASE_URL}messages`).subscribe({
+      next: (response) => {
+        this.messages = response.messages;
         this.maxMessageId = this.getMaxId();
         this.messages.sort((a, b) =>
           a.subject > b.subject ? 1 : b.subject > a.subject ? -1 : 0
@@ -45,10 +48,24 @@ export class MessageService {
       return;
     }
 
-    this.maxMessageId++;
-    message.id = this.maxMessageId.toString();
-    this.messages.push(message);
-    this.storeMessages();
+    message.id = '';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http
+      .post<{ message: string; createdMessage: Message }>(
+        this.BASE_URL + 'messages',
+        message,
+        { headers: headers }
+      )
+      .subscribe({
+        next: (response) => {
+          response.createdMessage.sender = message.sender;// temp
+          this.messages.push(response.createdMessage);
+          this.messageChangedEvent.next(this.messages.slice());
+        },
+        error: (error: any) => {
+          console.error(error);
+        },
+      });
   }
 
   private getMaxId(): number {
@@ -64,13 +81,4 @@ export class MessageService {
     return maxId;
   }
 
-  storeMessages() {
-    this.messages = JSON.parse(JSON.stringify(this.messages));
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    this.http
-      .put(this.BASE_URL + 'messages.json', this.messages, { headers: headers })
-      .subscribe(() => {
-        this.messageChangedEvent.next(this.messages.slice());
-      });
-  }
 }
